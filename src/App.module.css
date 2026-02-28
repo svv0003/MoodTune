@@ -64,7 +64,7 @@
 .charCount {
     position: absolute;
     bottom: 1rem;
-    right: 1rem;
+    right: 0;
     font-size: 0.8rem;
     color: #475569;
 }
@@ -78,13 +78,13 @@
 
 .quickTag {
     background: #1e293b;
+    color: white;
     border: 1px solid #334155;
     padding: 0.5rem 1rem;
     border-radius: 2rem;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s;
-    color: #afafaf;
 }
 
 .quickTag:hover {
@@ -120,7 +120,27 @@
     margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+}
+
+.leftContent {
+    display: flex;
+    align-items: center;
     gap: 1rem;
+}
+
+.emotionSummary {
+    margin: 0;
+}
+
+.resetIcon {
+    cursor: pointer;
+    color: #94a3b8;
+    transition: transform 0.2s;
+}
+
+.resetIcon:hover {
+    transform: rotate(-45deg);
 }
 
 .cardsGrid {
@@ -130,59 +150,7 @@
     margin-top: 2rem;
 }
 
-.themeGrid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    max-width: 900px;
-    margin: 0 auto 2.5rem auto;
-    padding: 0 1rem;
-}
-
-.themeCard {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 1.2rem;
-    border-radius: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.themeCard:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateY(-4px);
-}
-
-.activeTheme {
-    background: rgba(168, 85, 247, 0.15) !important;
-    border-color: #a855f7 !important;
-    box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
-}
-
-.themeKeyword {
-    color: #d8b4fe;
-    font-weight: 800;
-    font-size: 1rem;
-}
-
-.themeCuration {
-    color: #94a3b8;
-    font-size: 0.8rem;
-    line-height: 1.4;
-    word-break: keep-all;
-}
-
-.songListWrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 0 20px;
-    box-sizing: border-box;
+/* 마지막 태그가 아니면 뒤에 쉼표 추가 */
+.emotionTag:not(:last-child)::after {
+    content: ", ";
 }
