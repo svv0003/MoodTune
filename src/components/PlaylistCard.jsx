@@ -1,12 +1,15 @@
-import { useState, useEffect } from 'react';
+// src/components/PlaylistCard.jsx
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, ListMusic, Calendar, Play, X } from 'lucide-react';
+import { ExternalLink, ListMusic, Calendar, Play, X, Download, Share2 } from 'lucide-react';
+import html2canvas from 'html2canvas';
 import styles from './PlaylistCard.module.css';
 
-export default function PlaylistCard({ playlist, index }) {
+const PlaylistCard = ({ playlist, index, emoji, isHistoryView = false }) => {
     const [albumArts, setAlbumArts] = useState({});
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedSong, setSelectedSong] = useState(null);
+    const cardRef = useRef(null); // 이미지 캡처를 위한 ref
 
     const bgColor = playlist.background_color || '#1a1a2e';
     const accentColor = playlist.accent_color || '#e94560';
@@ -14,8 +17,11 @@ export default function PlaylistCard({ playlist, index }) {
     useEffect(() => {
         const fetchAlbumArts = async () => {
             const newArts = {};
+            // 히스토리 뷰에서는 상위 5곡만 로드하여 성능 최적화
+            const songsToLoad = isHistoryView ? playlist.songs.slice(0, 5) : playlist.songs;
+
             await Promise.all(
-                playlist.songs.map(async (song) => {
+                songsToLoad.map(async (song) => {
                     try {
                         const response = await fetch(
                             `https://itunes.apple.com/search?term=${encodeURIComponent(
@@ -34,93 +40,158 @@ export default function PlaylistCard({ playlist, index }) {
             setAlbumArts(newArts);
         };
         fetchAlbumArts();
-    }, [playlist.songs]);
+    }, [playlist.songs, isHistoryView]);
 
     const getPlatformUrl = (platform, song) => {
         const query = encodeURIComponent(`${song.artist} ${song.title}`);
         switch (platform) {
             case 'youtube': return `https://www.youtube.com/results?search_query=${query}`;
-            case 'spotify': return `https://open.spotify.com/search/${query}`; // 이 부분도 안정적인 URL로 수정
+            case 'spotify': return `https://open.spotify.com/search/${query}`;
             case 'melon': return `https://www.melon.com/search/total/index.htm?q=${query}`;
             default: return '#';
         }
     };
 
     const openModal = (song) => {
+        if (isHistoryView) return; // 히스토리 뷰에서는 모달 비활성화
         setSelectedSong(song);
         setIsModalOpen(true);
     };
 
-    return (
-        <motion.div
-            className={styles.card}
-            initial={{ opacity: 0, y: 20, background: '#121212' }}
-            animate={{
-                opacity: 1,
-                y: 0,
-                background: `linear-gradient(135deg, ${bgColor} 0%, #121212 100%)`,
-                borderColor: `${accentColor}4D`
-            }}
-            transition={{
+    // 이미지로 저장하는 함수
+    const handleSaveImage = async () => {
+        if (!cardRef.current) return;
+
+        try {
+            // 외부 이미지(앨범 아트) 로딩을 위한 useCORS 옵션 필수
+            const canvas = await html2canvas(cardRef.current, {
+                useCORS: true,
+                backgroundColor: null, // 투명 배경 유지
+                scale: 2, // 고해상도 다운로드
+                logging: false,
+            });
+
+            const image = canvas.toDataURL("image/png");
+            const link = document.createElement("a");
+            link.href = image;
+            link.download = `MOODTUNE_${playlist.vibe}_${playlist.theme}.png`;
+            link.click();
+        } catch (error) {
+            console.error("이미지 생성 실패:", error);
+            alert("이미지 생성에 실패했습니다. 다시 시도해주세요.");
+        }
+    };
+
+    // 히스토리 뷰일 때는 5곡만 표시
+    const displayedSongs = isHistoryView ? playlist.songs.slice(0, 5) : playlist.songs;
+
+    const cardVariants = {
+        hidden: { opacity: 0, y: 20, background: '#121212' },
+        visible: {
+            opacity: 1,
+            y: 0,
+            background: `linear-gradient(135deg, ${bgColor} 0%, #121212 100%)`,
+            borderColor: `${accentColor}4D`,
+            transition: {
                 delay: index * 0.1,
-                background: { duration: 0.8 }
-            }}
-        >
-            <div className={styles.header}>
-                <span className={styles.vibeTag} style={{ backgroundColor: accentColor }}>
-                    {playlist.vibe}
-                </span>
-                <h3 className={styles.theme}>{playlist.theme}</h3>
-            </div>
+                background: { duration: 0.8 },
+                y: { type: 'spring', stiffness: 100, damping: 15 }
+            }
+        }
+    };
 
-            <p className={styles.description}>{playlist.description}</p>
+    return (
+        <div className={`${styles.wrapper} ${isHistoryView ? styles.historyWrapper : ''}`}>
+            {/* 상단 액션 버튼 영역 (히스토리 뷰가 아닐 때만 표시) */}
+            {!isHistoryView && (
+                <div className={styles.actionHeader}>
+                    <button onClick={handleSaveImage} className={styles.saveBtn}>
+                        <Download size={16} />
+                        이미지로 저장
+                    </button>
+                    {/* 공유 기능은 Web Share API 등을 추가로 구현해야 함 */}
+                    <button className={styles.shareBtn} onClick={() => alert('공유 기능은 준비 중입니다!')}>
+                        <Share2 size={16} />
+                        공유하기
+                    </button>
+                </div>
+            )}
 
-            <div className={styles.songListContainer}>
-                <div className={styles.listHeader}>
-                    <ListMusic size={16} />
-                    <span>추천 큐레이션 (10곡)</span>
+            <motion.div
+                ref={cardRef} // 캡처 대상 지정
+                className={`${styles.card} ${isHistoryView ? styles.historyCard : ''}`}
+                initial="hidden"
+                animate="visible"
+                variants={cardVariants}
+            >
+                <div className={styles.header}>
+                    <div className={styles.titleArea}>
+                        <span className={styles.vibeTag} style={{ backgroundColor: accentColor }}>
+                            #{playlist.vibe}
+                        </span>
+                        <h3 className={styles.theme}>{playlist.theme}</h3>
+                    </div>
+                    {/* AI가 생성한 3D 이모지 표시 영역 */}
+                    {emoji && <div className={styles.emoji3d}>{emoji}</div>}
                 </div>
 
-                <div className={styles.songGrid}>
-                    {playlist.songs.map((song, i) => {
-                        const artwork = albumArts[song.title] || `https://ui-avatars.com/api/?name=${encodeURIComponent(song.title)}&background=random`;
+                <p className={styles.description}>{playlist.description}</p>
 
-                        return (
-                            <motion.div
-                                key={i}
-                                className={styles.songItem}
-                                style={{ border: `1px solid ${accentColor}26` }}
-                                onClick={() => openModal(song)}
-                            >
-                                <div className={styles.albumArtWrapper}>
-                                    <img src={artwork} alt={song.title} className={styles.albumArt} />
-                                    <div className={styles.playOverlay}>
-                                        <Play size={20} fill="white" />
+                <div className={styles.songListContainer}>
+                    <div className={styles.listHeader}>
+                        <ListMusic size={16} />
+                        <span>추천 큐레이션 ({displayedSongs.length}곡)</span>
+                    </div>
+
+                    <div className={styles.songGrid}>
+                        {displayedSongs.map((song, i) => {
+                            const artwork = albumArts[song.title] || `https://ui-avatars.com/api/?name=${encodeURIComponent(song.title)}&background=random`;
+
+                            return (
+                                <motion.div
+                                    key={i}
+                                    className={`${styles.songItem} ${isHistoryView ? styles.historySongItem : ''}`}
+                                    style={{ border: `1px solid ${accentColor}26` }}
+                                    onClick={() => openModal(song)}
+                                    whileHover={!isHistoryView ? { translateX: 4, background: 'rgba(255, 255, 255, 0.1)' } : {}}
+                                >
+                                    <div className={styles.albumArtWrapper}>
+                                        <img src={artwork} alt={song.title} className={styles.albumArt} crossOrigin="anonymous" /> {/* CORS 설정 추가 */}
+                                        {!isHistoryView && (
+                                            <div className={styles.playOverlay}>
+                                                <Play size={20} fill="white" />
+                                            </div>
+                                        )}
                                     </div>
-                                </div>
 
-                                <div className={styles.songDetails}>
-                                    <div className={styles.songMain}>
-                                        <span className={styles.songTitle}>{song.title}</span>
-                                        <span className={styles.artistName}>{song.artist}</span>
-                                    </div>
-
-                                    <div className={styles.songFooter}>
-                                        <div className={styles.releaseDate}>
-                                            <Calendar size={12} />
-                                            {/* AI가 전달해준 release_date를 출력 */}
-                                            <span>{song.release_date}</span>
+                                    <div className={styles.songDetails}>
+                                        <div className={styles.songMain}>
+                                            <span className={styles.songTitle}>{song.title}</span>
+                                            <span className={styles.artistName}>{song.artist}</span>
                                         </div>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        );
-                    })}
-                </div>
-            </div>
 
+                                        {!isHistoryView && (
+                                            <div className={styles.songFooter}>
+                                                <div className={styles.releaseDate}>
+                                                    <Calendar size={12} />
+                                                    <span>{song.release_date}</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* 캡처 시 워터마크 (선택사항) */}
+                <div className={styles.watermark}>MOODTUNE ✦ AI Curated</div>
+            </motion.div>
+
+            {/* 플랫폼 선택 모달 (기존 코드 유지) */}
             <AnimatePresence>
-                {isModalOpen && selectedSong && (
+                {isModalOpen && selectedSong && !isHistoryView && (
                     <div className={styles.modalOverlay} onClick={() => setIsModalOpen(false)}>
                         <motion.div
                             className={styles.modalContent}
@@ -136,35 +207,25 @@ export default function PlaylistCard({ playlist, index }) {
                             <h4>어디에서 감상할까요?</h4>
                             <p className={styles.modalSongInfo}>{selectedSong.artist} - {selectedSong.title}</p>
 
+
                             <div className={styles.platformGrid}>
-                                <a href={getPlatformUrl('youtube', selectedSong)}
-                                   target="_blank"
-                                   rel="noopener noreferrer"
-                                   className={styles.platformItem}>
+                                <a href={getPlatformUrl('youtube', selectedSong)} target="_blank" rel="noopener noreferrer" className={styles.platformItem}>
                                     <div className={`${styles.iconBox} ${styles.youtube}`}>
                                         <img src="https://simpleicons.org/icons/youtube.svg" alt="YouTube" className={styles.brandIcon} />
                                     </div>
                                     <span>YouTube</span>
                                 </a>
 
-                                <a href={getPlatformUrl('spotify', selectedSong)}
-                                   target="_blank"
-                                   rel="noopener noreferrer"
-                                   className={styles.platformItem}>
+                                <a href={getPlatformUrl('spotify', selectedSong)} target="_blank" rel="noopener noreferrer" className={styles.platformItem}>
                                     <div className={`${styles.iconBox} ${styles.spotify}`}>
                                         <img src="https://simpleicons.org/icons/spotify.svg" alt="Spotify" className={styles.brandIcon} />
                                     </div>
                                     <span>Spotify</span>
                                 </a>
 
-                                <a href={getPlatformUrl('melon', selectedSong)}
-                                   target="_blank"
-                                   rel="noopener noreferrer"
-                                   className={styles.platformItem}>
+                                <a href={getPlatformUrl('melon', selectedSong)} target="_blank" rel="noopener noreferrer" className={styles.platformItem}>
                                     <div className={`${styles.iconBox} ${styles.melon}`}>
-                                        <img src="/images/Frame%201-3.svg"
-                                             alt="Melon"
-                                             className={`${styles.brandIcon} ${styles.melonIcon}`}/>
+                                        <img src="/images/Frame%201-3.svg" alt="Melon" className={`${styles.brandIcon} ${styles.melonIcon}`}/>
                                     </div>
                                     <span>Melon</span>
                                 </a>
@@ -173,6 +234,8 @@ export default function PlaylistCard({ playlist, index }) {
                     </div>
                 )}
             </AnimatePresence>
-        </motion.div>
+        </div>
     );
-}
+};
+
+export default PlaylistCard;
