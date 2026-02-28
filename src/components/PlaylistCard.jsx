@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ExternalLink, ListMusic, Calendar, Play } from 'lucide-react';
+import {motion, AnimatePresence, px} from 'framer-motion';
+import { ExternalLink, ListMusic, Calendar, Play, X } from 'lucide-react';
 import styles from './PlaylistCard.module.css';
 
 export default function PlaylistCard({ playlist, index }) {
     const [albumArts, setAlbumArts] = useState({});
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedSong, setSelectedSong] = useState(null);
 
-    // AI가 반환한 색상 사용 (데이터가 없을 경우를 대비한 기본값 설정)
     const bgColor = playlist.background_color || '#1a1a2e';
     const accentColor = playlist.accent_color || '#e94560';
 
@@ -32,9 +33,32 @@ export default function PlaylistCard({ playlist, index }) {
             );
             setAlbumArts(newArts);
         };
-
         fetchAlbumArts();
     }, [playlist.songs]);
+
+    const getPlatformUrl = (platform, song) => {
+        const query = encodeURIComponent(`${song.artist} ${song.title}`);
+        switch (platform) {
+            case 'youtube': return `https://www.youtube.com/results?search_query=${query}`;
+            case 'spotify': return `https://open.spotify.com/search/${query}`;
+            case 'melon': return `https://www.melon.com/search/total/index.htm?q=${query}`;
+            default: return '#';
+        }
+    };
+
+    const openModal = (song) => {
+        setSelectedSong(song);
+        setIsModalOpen(true);
+    };
+
+    // 모바일 클릭 효과를 인지시키기 위한 딜레이 핸들러
+    const handlePlatformClick = (e, platform, song) => {
+        e.preventDefault();
+        const url = getPlatformUrl(platform, song);
+        setTimeout(() => {
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }, 150);
+    };
 
     return (
         <motion.div
@@ -43,21 +67,16 @@ export default function PlaylistCard({ playlist, index }) {
             animate={{
                 opacity: 1,
                 y: 0,
-                // 그라데이션에 AI가 추천한 배경색 적용
                 background: `linear-gradient(135deg, ${bgColor} 0%, #121212 100%)`,
-                borderColor: `${accentColor}4D` // 투명도 30% 적용
+                borderColor: `${accentColor}4D`
             }}
             transition={{
                 delay: index * 0.1,
-                background: { duration: 0.8 } // 배경색 변경 시 부드럽게 전환
+                background: { duration: 0.8 }
             }}
         >
             <div className={styles.header}>
-                {/* Vibe 태그에 강조색 배경 적용 */}
-                <span
-                    className={styles.vibeTag}
-                    style={{ backgroundColor: accentColor }}
-                >
+                <span className={styles.vibeTag} style={{ backgroundColor: accentColor }}>
                     {playlist.vibe}
                 </span>
                 <h3 className={styles.theme}>{playlist.theme}</h3>
@@ -73,21 +92,20 @@ export default function PlaylistCard({ playlist, index }) {
 
                 <div className={styles.songGrid}>
                     {playlist.songs.map((song, i) => {
-                        const individualYoutubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(song.artist + ' ' + song.title)}`;
                         const artwork = albumArts[song.title] || `https://ui-avatars.com/api/?name=${encodeURIComponent(song.title)}&background=random`;
 
                         return (
                             <motion.div
                                 key={i}
                                 className={styles.songItem}
-                                // 곡 리스트 테두리에 아주 연하게 강조색 적용
                                 style={{ border: `1px solid ${accentColor}26` }}
+                                onClick={() => openModal(song)}
                             >
                                 <div className={styles.albumArtWrapper}>
                                     <img src={artwork} alt={song.title} className={styles.albumArt} />
-                                    <a href={individualYoutubeUrl} target="_blank" rel="noopener noreferrer" className={styles.playOverlay}>
+                                    <div className={styles.playOverlay}>
                                         <Play size={20} fill="white" />
-                                    </a>
+                                    </div>
                                 </div>
 
                                 <div className={styles.songDetails}>
@@ -99,17 +117,8 @@ export default function PlaylistCard({ playlist, index }) {
                                     <div className={styles.songFooter}>
                                         <div className={styles.releaseDate}>
                                             <Calendar size={12} />
-                                            <span>2024</span>
+                                            <span>{song.release_date || '2024'}</span>
                                         </div>
-                                        <a
-                                            href={individualYoutubeUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className={styles.linkIcon}
-                                            style={{ color: accentColor }} // 아이콘을 강조색으로 변경
-                                        >
-                                            <ExternalLink size={14} />
-                                        </a>
                                     </div>
                                 </div>
                             </motion.div>
@@ -117,6 +126,63 @@ export default function PlaylistCard({ playlist, index }) {
                     })}
                 </div>
             </div>
+
+            {/* 플랫폼 선택 모달 */}
+            <AnimatePresence>
+                {isModalOpen && selectedSong && (
+                    <div className={styles.modalOverlay} onClick={() => setIsModalOpen(false)}>
+                        <motion.div
+                            className={styles.modalContent}
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <button className={styles.closeBtn} onClick={() => setIsModalOpen(false)}>
+                                <X size={20} />
+                            </button>
+
+                            <h4>어디에서 감상할까요?</h4>
+                            <p className={styles.modalSongInfo}>{selectedSong.artist} - {selectedSong.title}</p>
+
+
+                            <div className={styles.platformGrid}>
+                                <a href={getPlatformUrl('youtube', selectedSong)}
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   className={styles.platformItem}>
+                                    <div className={`${styles.iconBox} ${styles.youtube}`}>
+                                        <img src="https://simpleicons.org/icons/youtube.svg" alt="YouTube" className={styles.brandIcon} />
+                                    </div>
+                                    <span>YouTube</span>
+                                </a>
+
+                                <a href={getPlatformUrl('spotify', selectedSong)}
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   className={styles.platformItem}>
+                                    <div className={`${styles.iconBox} ${styles.spotify}`}>
+                                        <img src="https://simpleicons.org/icons/spotify.svg" alt="Spotify" className={styles.brandIcon} />
+                                    </div>
+                                    <span>Spotify</span>
+                                </a>
+
+                                <a href={getPlatformUrl('melon', selectedSong)}
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   className={styles.platformItem}>
+                                    <div className={`${styles.iconBox} ${styles.melon}`}>
+                                        <img src="/images/Frame%201-3.svg"
+                                             alt="Melon"
+                                             className={`${styles.brandIcon} ${styles.melonIcon}`}/>
+                                    </div>
+                                    <span>Melon</span>
+                                </a>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </motion.div>
     );
 }

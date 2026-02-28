@@ -56,6 +56,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    margin-top: 15px;
 }
 
 .songItem {
@@ -157,4 +158,227 @@
 .linkIcon:hover {
     transform: scale(1.2);
     opacity: 1;
+}
+
+
+/* 모달 배경 */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+/* 모달 본체 */
+.modalContent {
+    background: #1e293b;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.modalSongInfo {
+    color: #dde9f8;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.platformGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+}
+
+.platformItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: white;
+    font-size: 0.9rem;
+    transition: transform 0.2s;
+}
+
+.platformItem:hover {
+    transform: translateY(-5px);
+}
+
+.iconBox {
+    width: 70px;
+    height: 70px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    background: #4a5c75;
+}
+
+.youtube { background: #ff000022; }
+.spotify { background: #1db95422; }
+.melon { background: #00cd3c22; }
+
+.closeBtn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+}
+
+.linkIconBtn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+
+.brandIcon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    /* 만약 로고가 검은색이라면 밝은 배경에 맞게 필터 조절 가능 */
+    /* filter: brightness(0) invert(1); <- 로고가 검은색일 때 흰색으로 변경 */
+}
+
+.iconBox {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    background: #576987;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 브랜드별 호버 시 포인트 컬러 강조 */
+.platformItem:hover .youtube {
+    background: #FF0000;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+}
+
+.platformItem:hover .spotify {
+    background: #1DB954;
+    box-shadow: 0 0 15px rgba(29, 185, 84, 0.4);
+}
+
+.platformItem:hover .melon {
+    background: #dcdcdc;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+.platformItem span {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #bbcee8;
+}
+
+.platformItem:hover span {
+    color: #f8fafc;
+}
+
+/* 기본 아이콘 공통 */
+.brandIcon {
+    width: 32px;
+    height: 32px;
+}
+
+/* 멜론만 크게 */
+.melonIcon {
+    transform: scale(1.6);
+    transform-origin: center;
+}
+
+/* 부모가 잘라버리면 안 되니까 */
+.melon {
+    overflow: visible;
+}
+
+
+
+
+
+
+
+
+
+
+/*================================================================*/
+@media (max-width: 480px) {
+    .card {
+        padding: 20px 16px;
+    }
+
+    .theme {
+        font-size: 1.3rem;
+    }
+
+    .modalContent {
+        max-width: 320px;
+        padding: 36px 20px 24px;
+    }
+
+    .platformGrid {
+        gap: 12px;
+    }
+
+    .iconBox {
+        border-radius: 14px;
+    }
+
+    .brandIcon {
+        width: 26px;
+        height: 26px;
+    }
+
+    .melonIcon {
+        transform: scale(1.3);
+    }
+
+    /* --- 모바일 터치(active) 시 hover와 동일한 효과 적용 --- */
+
+    .platformItem:active {
+        transform: translateY(-2px); /* 살짝 들리는 효과 */
+    }
+
+    .platformItem:active .youtube {
+        background: #FF0000;
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+    }
+
+    .platformItem:active .spotify {
+        background: #1DB954;
+        box-shadow: 0 0 15px rgba(29, 185, 84, 0.4);
+    }
+
+    .platformItem:active .melon {
+        background: #dcdcdc;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    }
+
+    .platformItem:active span {
+        color: #f8fafc;
+    }
 }
