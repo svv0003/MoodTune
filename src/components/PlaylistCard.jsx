@@ -1,7 +1,7 @@
 // src/components/PlaylistCard.jsx
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, ListMusic, Calendar, Play, X, Download, Share2 } from 'lucide-react';
+import { ListMusic, Calendar, Play, X, Download, Share2 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import styles from './PlaylistCard.module.css';
 
