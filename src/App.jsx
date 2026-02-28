@@ -168,7 +168,8 @@ export default function App() {
                                 <div className={styles.resetIconWrapper}
                                      onClick={handleSubmit}
                                      title="새로고침">
-                                    <RotateCcw size={18}
+                                    <RotateCcw size={22}
+                                               strokeWidth={10}
                                                className={styles.resetIcon}/>
                                 </div>
                             </div>

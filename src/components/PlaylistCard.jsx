@@ -7,7 +7,6 @@ export default function PlaylistCard({ playlist, index }) {
     const [albumArts, setAlbumArts] = useState({});
 
     useEffect(() => {
-        // 각 노래의 앨범 아트를 iTunes API에서 가져오는 함수
         const fetchAlbumArts = async () => {
             const newArts = {};
             await Promise.all(
@@ -20,7 +19,6 @@ export default function PlaylistCard({ playlist, index }) {
                         );
                         const data = await response.json();
                         if (data.results && data.results[0]) {
-                            // 100x100 이미지를 600x600 고화질로 변경하여 저장
                             newArts[song.title] = data.results[0].artworkUrl100.replace('100x100bb', '600x600bb');
                         }
                     } catch (error) {
