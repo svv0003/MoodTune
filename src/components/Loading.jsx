@@ -1,13 +1,6 @@
 import { motion } from 'framer-motion';
 import styles from './Loading.module.css';
 
-const messages = [
-    "당신의 감정을 읽고 있어요...",
-    "음악과 감성을 연결하는 중...",
-    "딱 맞는 플레이리스트를 찾고 있어요...",
-    "거의 다 됐어요 ✨",
-];
-
 export default function Loading() {
     return (
         <motion.div
