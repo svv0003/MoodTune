@@ -9,7 +9,7 @@ export async function analyzeMoodAndCurate(userInput) {
 
 {
   "emotion_summary": "사용자의 현재 기분을 공감해주는 따뜻한 한 줄 요약",
-  "emotion_tags": ["감정태그1", "감정태그2", "감정태그3"],
+  "emotion_tags": ["#감정태그1", "#감정태그2", "#감정태그3"],
   "playlist": {
     "theme": "이 분위기에 딱 맞는 플레이리스트 제목",
     "description": "이 곡들을 추천하는 이유를 2문장 내외로 짧게 설명",

@@ -150,7 +150,17 @@
     margin-top: 2rem;
 }
 
+<<<<<<< HEAD
 /* 마지막 태그가 아니면 뒤에 쉼표 추가 */
 .emotionTag:not(:last-child)::after {
     content: ", ";
 }
+=======
+.emotionTag {
+    border-radius: 20px;
+    padding: 3px 8px;
+    margin-right: 10px;
+    border: 1px solid #6d6e89;
+    background-color: #5a6380;
+}
+>>>>>>> 7c29e48 (temporal saving)
