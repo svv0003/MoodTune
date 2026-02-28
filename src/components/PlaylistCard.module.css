@@ -1,56 +1,108 @@
 .card {
-    background: #546a77;
-    border: 1px solid #bac1cc;
+    /* 배경과 테두리 색상은 JS에서 인라인 스타일로 동적 주입됨 */
     border-radius: 16px;
     padding: 24px;
     color: white;
+    /* 카드가 뜨는 듯한 효과를 위한 그림자 */
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    transition: all 0.5s ease; /* 색상 변경 시 부드럽게 전환 */
+    margin-bottom: 24px;
+}
 
-    /* 사각형 균일 내부 그림자 */
-    /*box-shadow:*/
-    /*        inset 0 0 40px #0f172a,*/
-    /*        0 12px 30px rgba(0, 0, 0, 0.35);*/
+.header {
+    margin-bottom: 16px;
+}
+
+.vibeTag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.theme {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.description {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 24px;
+}
+
+.songListContainer {
+    margin-top: 20px;
+}
+
+.listHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    opacity: 0.9;
 }
 
 .songGrid {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-top: 15px;
 }
 
 .songItem {
     display: flex;
     gap: 12px;
     padding: 12px;
-    border-radius: 8px;
+    border-radius: 10px;
     align-items: center;
-    border: 1px solid #bac1cc;
+    /* 항목 간 구분을 위해 아주 투명한 배경색 적용 */
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(4px);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.songItem:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(4px);
 }
 
 .albumArtWrapper {
     position: relative;
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
     flex-shrink: 0;
 }
 
 .albumArt {
     width: 100%;
     height: 100%;
-    border-radius: 4px;
+    border-radius: 6px;
     object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
 .playOverlay {
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
     transition: opacity 0.2s;
-    border-radius: 4px;
+    border-radius: 6px;
 }
 
 .albumArtWrapper:hover .playOverlay {
@@ -61,25 +113,31 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    justify-content: center;
+}
+
+.songMain {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
 .songTitle {
-    display: block;
-    font-weight: 800;
-    font-size: 1rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #ffffff;
 }
 
 .artistName {
     font-size: 0.8rem;
-    color: #fafafa;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .songFooter {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 2px;
+    margin-top: 6px;
 }
 
 .releaseDate {
@@ -87,9 +145,16 @@
     align-items: center;
     gap: 4px;
     font-size: 0.7rem;
-    color: #fafafa;
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .linkIcon {
-    color: #ff4b4b;
+    /* 색상은 JSX에서 accentColor로 직접 제어 */
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    opacity: 0.8;
+}
+
+.linkIcon:hover {
+    transform: scale(1.2);
+    opacity: 1;
 }

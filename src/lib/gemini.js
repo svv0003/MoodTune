@@ -5,32 +5,25 @@ const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-
 export async function analyzeMoodAndCurate(userInput) {
     const prompt = `
 당신은 K-POP 큐레이터입니다. 사용자 입력: "${userInput}"
-반드시 다음 JSON 형식으로만 응답하세요. (마크다운 없이 순수 JSON만 응답)
+반드시 다음 JSON 형식으로만 응답하세요.
 
 {
   "emotion_summary": "사용자의 현재 기분을 공감해주는 따뜻한 한 줄 요약",
-  "emotion_tags": ["감정태그1", "감정태그2", "감정태그3"],
+  "emotion_tags": ["#감정태그1", "#감정태그2", "#감정태그3"],
   "playlist": {
     "theme": "이 분위기에 딱 맞는 플레이리스트 제목",
     "description": "이 곡들을 추천하는 이유를 2문장 내외로 짧게 설명",
     "vibe": "분위기 키워드",
+    "background_color": "분위기에 어울리는 진한 배경색 Hex 코드 (예: #1a1a2e)",
+    "accent_color": "배경과 어울리는 밝은 강조색 Hex 코드 (예: #e94560)",
     "songs": [
-      {"artist": "가수", "title": "제목"},
-      {"artist": "가수", "title": "제목"},
-      {"artist": "가수", "title": "제목"},
-      {"artist": "가수", "title": "제목"},
-      {"artist": "가수", "title": "제목"},
-      {"artist": "가수", "title": "제목"},
-      {"artist": "가수", "title": "제목"},
-      {"artist": "가수", "title": "제목"},
-      {"artist": "가수", "title": "제목"},
       {"artist": "가수", "title": "제목"}
     ]
   }
 }
-* 플레이리스트는 딱 1개만 만드세요.
+* playlist.background_color는 텍스트(흰색)가 잘 보이도록 충분히 어두운 톤으로 지정하세요.
+* playlist.accent_color는 테두리나 아이콘에 사용할 밝고 선명한 색으로 지정하세요.
 * 곡은 반드시 10곡을 꽉 채워주세요.
-* 모든 설명은 공백 포함 100자 이내로 간결하게 작성하세요.
 `;
 
     const response = await fetch(API_URL, {
