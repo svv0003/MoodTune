@@ -17,13 +17,18 @@ export async function analyzeMoodAndCurate(userInput) {
     "background_color": "분위기에 어울리는 진한 배경색 Hex 코드 (예: #1a1a2e)",
     "accent_color": "배경과 어울리는 밝은 강조색 Hex 코드 (예: #e94560)",
     "songs": [
-      {"artist": "가수", "title": "제목"}
+      {
+        "artist": "가수", 
+        "title": "제목", 
+        "release_date": "YYYY.MM.DD" // 이 부분을 추가하세요!
+      }
     ]
   }
 }
 * playlist.background_color는 텍스트(흰색)가 잘 보이도록 충분히 어두운 톤으로 지정하세요.
 * playlist.accent_color는 테두리나 아이콘에 사용할 밝고 선명한 색으로 지정하세요.
 * 곡은 반드시 10곡을 꽉 채워주세요.
+* release_date는 해당 곡의 실제 발매일을 "YYYY.MM.DD" 형식으로 정확히 기입하세요.
 `;
 
     const response = await fetch(API_URL, {

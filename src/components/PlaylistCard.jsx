@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import {motion, AnimatePresence, px} from 'framer-motion';
-import { ExternalLink, ListMusic, Calendar, Play, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ListMusic, Calendar, Play, X } from 'lucide-react';
 import styles from './PlaylistCard.module.css';
 
 export default function PlaylistCard({ playlist, index }) {
@@ -8,20 +8,18 @@ export default function PlaylistCard({ playlist, index }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedSong, setSelectedSong] = useState(null);
 
-    const bgColor = playlist.background_color || '#1a1a2e';
+    const bgColor = playlist.background_color || '#121212';
     const accentColor = playlist.accent_color || '#e94560';
 
+    // iTunes에서 앨범 아트 가져오기
     useEffect(() => {
         const fetchAlbumArts = async () => {
             const newArts = {};
             await Promise.all(
                 playlist.songs.map(async (song) => {
                     try {
-                        const response = await fetch(
-                            `https://itunes.apple.com/search?term=${encodeURIComponent(
-                                song.artist + ' ' + song.title
-                            )}&entity=song&limit=1`
-                        );
+                        const query = encodeURIComponent(`${song.artist} ${song.title}`);
+                        const response = await fetch(`https://itunes.apple.com/search?term=${query}&entity=song&limit=1`);
                         const data = await response.json();
                         if (data.results && data.results[0]) {
                             newArts[song.title] = data.results[0].artworkUrl100.replace('100x100bb', '600x600bb');
@@ -46,34 +44,17 @@ export default function PlaylistCard({ playlist, index }) {
         }
     };
 
-    const openModal = (song) => {
-        setSelectedSong(song);
-        setIsModalOpen(true);
-    };
-
-    // 모바일 클릭 효과를 인지시키기 위한 딜레이 핸들러
-    const handlePlatformClick = (e, platform, song) => {
-        e.preventDefault();
-        const url = getPlatformUrl(platform, song);
-        setTimeout(() => {
-            window.open(url, '_blank', 'noopener,noreferrer');
-        }, 150);
-    };
-
     return (
         <motion.div
             className={styles.card}
-            initial={{ opacity: 0, y: 20, background: '#121212' }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{
                 opacity: 1,
                 y: 0,
                 background: `linear-gradient(135deg, ${bgColor} 0%, #121212 100%)`,
                 borderColor: `${accentColor}4D`
             }}
-            transition={{
-                delay: index * 0.1,
-                background: { duration: 0.8 }
-            }}
+            transition={{ delay: index * 0.1, duration: 0.5 }}
         >
             <div className={styles.header}>
                 <span className={styles.vibeTag} style={{ backgroundColor: accentColor }}>
@@ -92,14 +73,19 @@ export default function PlaylistCard({ playlist, index }) {
 
                 <div className={styles.songGrid}>
                     {playlist.songs.map((song, i) => {
-                        const artwork = albumArts[song.title] || `https://ui-avatars.com/api/?name=${encodeURIComponent(song.title)}&background=random`;
+                        const artwork = albumArts[song.title] || `https://ui-avatars.com/api/?name=${encodeURIComponent(song.title)}&background=333&color=fff`;
 
                         return (
                             <motion.div
                                 key={i}
                                 className={styles.songItem}
                                 style={{ border: `1px solid ${accentColor}26` }}
-                                onClick={() => openModal(song)}
+                                onClick={() => {
+                                    setSelectedSong(song);
+                                    setIsModalOpen(true);
+                                }}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                             >
                                 <div className={styles.albumArtWrapper}>
                                     <img src={artwork} alt={song.title} className={styles.albumArt} />
@@ -113,11 +99,11 @@ export default function PlaylistCard({ playlist, index }) {
                                         <span className={styles.songTitle}>{song.title}</span>
                                         <span className={styles.artistName}>{song.artist}</span>
                                     </div>
-
                                     <div className={styles.songFooter}>
                                         <div className={styles.releaseDate}>
                                             <Calendar size={12} />
-                                            <span>{song.release_date || '2024'}</span>
+                                            {/* AI가 생성한 release_date를 여기서 출력 */}
+                                            <span>{song.release_date || '날짜 정보 없음'}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -141,41 +127,20 @@ export default function PlaylistCard({ playlist, index }) {
                             <button className={styles.closeBtn} onClick={() => setIsModalOpen(false)}>
                                 <X size={20} />
                             </button>
-
                             <h4>어디에서 감상할까요?</h4>
                             <p className={styles.modalSongInfo}>{selectedSong.artist} - {selectedSong.title}</p>
 
-
                             <div className={styles.platformGrid}>
-                                <a href={getPlatformUrl('youtube', selectedSong)}
-                                   target="_blank"
-                                   rel="noopener noreferrer"
-                                   className={styles.platformItem}>
-                                    <div className={`${styles.iconBox} ${styles.youtube}`}>
-                                        <img src="https://simpleicons.org/icons/youtube.svg" alt="YouTube" className={styles.brandIcon} />
-                                    </div>
+                                <a href={getPlatformUrl('youtube', selectedSong)} target="_blank" rel="noopener noreferrer" className={styles.platformItem}>
+                                    <div className={`${styles.iconBox} ${styles.youtube}`}><Play size={20} /></div>
                                     <span>YouTube</span>
                                 </a>
-
-                                <a href={getPlatformUrl('spotify', selectedSong)}
-                                   target="_blank"
-                                   rel="noopener noreferrer"
-                                   className={styles.platformItem}>
-                                    <div className={`${styles.iconBox} ${styles.spotify}`}>
-                                        <img src="https://simpleicons.org/icons/spotify.svg" alt="Spotify" className={styles.brandIcon} />
-                                    </div>
+                                <a href={getPlatformUrl('spotify', selectedSong)} target="_blank" rel="noopener noreferrer" className={styles.platformItem}>
+                                    <div className={`${styles.iconBox} ${styles.spotify}`}><ListMusic size={20} /></div>
                                     <span>Spotify</span>
                                 </a>
-
-                                <a href={getPlatformUrl('melon', selectedSong)}
-                                   target="_blank"
-                                   rel="noopener noreferrer"
-                                   className={styles.platformItem}>
-                                    <div className={`${styles.iconBox} ${styles.melon}`}>
-                                        <img src="/images/Frame%201-3.svg"
-                                             alt="Melon"
-                                             className={`${styles.brandIcon} ${styles.melonIcon}`}/>
-                                    </div>
+                                <a href={getPlatformUrl('melon', selectedSong)} target="_blank" rel="noopener noreferrer" className={styles.platformItem}>
+                                    <div className={`${styles.iconBox} ${styles.melon}`}><div className={styles.melonCircle} /></div>
                                     <span>Melon</span>
                                 </a>
                             </div>
