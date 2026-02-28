@@ -138,14 +138,12 @@ export default function App() {
                     </motion.div>
                 )}
 
-                {/* ── LOADING PHASE ── */}
                 {phase === 'loading' && (
                     <motion.div key="loading" className={styles.loadingPhase}>
                         <Loading />
                     </motion.div>
                 )}
 
-                {/* ── RESULT PHASE ── */}
                 {phase === 'result' && result && (
                     <motion.div
                         key="result"
@@ -167,14 +165,11 @@ export default function App() {
                                     <p className={styles.emotionSummary}>{result.emotion_summary}</p>
                                 </div>
 
-                                {/* handleSubmit을 호출하여 새로 조회 */}
-                                <div
-                                    className={styles.resetIconWrapper}
-                                    onClick={handleSubmit}
-                                    title="새로고침">
-                                    <RotateCcw
-                                        size={18}
-                                        className={styles.resetIcon}/>
+                                <div className={styles.resetIconWrapper}
+                                     onClick={handleSubmit}
+                                     title="새로고침">
+                                    <RotateCcw size={18}
+                                               className={styles.resetIcon}/>
                                 </div>
                             </div>
 
@@ -184,7 +179,6 @@ export default function App() {
                                 ))}
                             </div>
 
-                            {/* 입력했던 텍스트 미리보기 (클릭하면 다시 수정 페이지로 이동하게 구성 가능) */}
                             <p className={styles.inputPreview} onClick={handleReset} style={{ cursor: 'pointer' }}>
                                 <span className={styles.inputQuote}>"</span>
                                 {input}
@@ -193,14 +187,11 @@ export default function App() {
                             </p>
                         </motion.div>
 
-                        {/* 플레이리스트 카드 */}
                         <div className={styles.singleCardContainer}>
                             {result.playlist && (
                                 <PlaylistCard playlist={result.playlist} index={0} />
                             )}
                         </div>
-
-                        {/* 하단 resetArea 부분은 요청하신 대로 삭제했습니다. */}
                     </motion.div>
                 )}
             </AnimatePresence>
