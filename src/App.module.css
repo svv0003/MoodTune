@@ -150,12 +150,26 @@
     margin-top: 2rem;
 }
 
-<<<<<<< HEAD
-/* 마지막 태그가 아니면 뒤에 쉼표 추가 */
-.emotionTag:not(:last-child)::after {
-    content: ", ";
+.resultSubTitle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1.5rem;
 }
-=======
+
+.inputPreview {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.emotionTags {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    font-size: 12px;
+}
+
 .emotionTag {
     border-radius: 20px;
     padding: 3px 8px;
@@ -163,4 +177,24 @@
     border: 1px solid #6d6e89;
     background-color: #5a6380;
 }
->>>>>>> 7c29e48 (temporal saving)
+
+.backToMain {
+    /*display: block;*/
+    border-radius: 20px;
+    padding: 5px 20px;
+    border: 1px solid #7c5dfa;
+    background: #7c5dfa;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    /* --- 추가된 속성 --- */
+    transition: all 0.3s ease; /* 배경색과 위치가 0.3초 동안 부드럽게 변경됨 */
+    display: inline-block;    /* transform 효과가 잘 적용되도록 block 성격 부여 */
+}
+
+.backToMain:hover {
+    background: #9277ff;
+    /* --- 추가된 속성 --- */
+    transform: translateY(-2px); /* Y축(위쪽)으로 4px만큼 이동 */
+    box-shadow: 0 5px 15px rgba(20, 12, 59, 0.4); /* 공중에 뜬 느낌을 주는 그림자 추가 */
+}

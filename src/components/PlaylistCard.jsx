@@ -6,6 +6,10 @@ import styles from './PlaylistCard.module.css';
 export default function PlaylistCard({ playlist, index }) {
     const [albumArts, setAlbumArts] = useState({});
 
+    // AI가 반환한 색상 사용 (데이터가 없을 경우를 대비한 기본값 설정)
+    const bgColor = playlist.background_color || '#1a1a2e';
+    const accentColor = playlist.accent_color || '#e94560';
+
     useEffect(() => {
         const fetchAlbumArts = async () => {
             const newArts = {};
@@ -35,12 +39,27 @@ export default function PlaylistCard({ playlist, index }) {
     return (
         <motion.div
             className={styles.card}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+            initial={{ opacity: 0, y: 20, background: '#121212' }}
+            animate={{
+                opacity: 1,
+                y: 0,
+                // 그라데이션에 AI가 추천한 배경색 적용
+                background: `linear-gradient(135deg, ${bgColor} 0%, #121212 100%)`,
+                borderColor: `${accentColor}4D` // 투명도 30% 적용
+            }}
+            transition={{
+                delay: index * 0.1,
+                background: { duration: 0.8 } // 배경색 변경 시 부드럽게 전환
+            }}
         >
             <div className={styles.header}>
-                <span className={styles.vibeTag}>{playlist.vibe}</span>
+                {/* Vibe 태그에 강조색 배경 적용 */}
+                <span
+                    className={styles.vibeTag}
+                    style={{ backgroundColor: accentColor }}
+                >
+                    {playlist.vibe}
+                </span>
                 <h3 className={styles.theme}>{playlist.theme}</h3>
             </div>
 
@@ -58,7 +77,12 @@ export default function PlaylistCard({ playlist, index }) {
                         const artwork = albumArts[song.title] || `https://ui-avatars.com/api/?name=${encodeURIComponent(song.title)}&background=random`;
 
                         return (
-                            <motion.div key={i} className={styles.songItem}>
+                            <motion.div
+                                key={i}
+                                className={styles.songItem}
+                                // 곡 리스트 테두리에 아주 연하게 강조색 적용
+                                style={{ border: `1px solid ${accentColor}26` }}
+                            >
                                 <div className={styles.albumArtWrapper}>
                                     <img src={artwork} alt={song.title} className={styles.albumArt} />
                                     <a href={individualYoutubeUrl} target="_blank" rel="noopener noreferrer" className={styles.playOverlay}>
@@ -75,9 +99,15 @@ export default function PlaylistCard({ playlist, index }) {
                                     <div className={styles.songFooter}>
                                         <div className={styles.releaseDate}>
                                             <Calendar size={12} />
-                                            <span>{song.release_date || '2024'}</span>
+                                            <span>2024</span>
                                         </div>
-                                        <a href={individualYoutubeUrl} target="_blank" rel="noopener noreferrer" className={styles.linkIcon}>
+                                        <a
+                                            href={individualYoutubeUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={styles.linkIcon}
+                                            style={{ color: accentColor }} // 아이콘을 강조색으로 변경
+                                        >
                                             <ExternalLink size={14} />
                                         </a>
                                     </div>

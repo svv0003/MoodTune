@@ -168,24 +168,29 @@ export default function App() {
                                 <div className={styles.resetIconWrapper}
                                      onClick={handleSubmit}
                                      title="새로고침">
-                                    <RotateCcw size={22}
-                                               strokeWidth={10}
+                                    <RotateCcw size={18}
+                                               strokeWidth={2}
                                                className={styles.resetIcon}/>
                                 </div>
                             </div>
 
-                            <div className={styles.emotionTags}>
-                                {result.emotion_tags?.map((tag, i) => (
-                                    <span key={i} className={styles.emotionTag}>{tag}</span>
-                                ))}
-                            </div>
+                            <div className={styles.resultSubTitle}>
+                                <div className={styles.emotionTags}>
+                                    {result.emotion_tags?.map((tag, i) => (
+                                        <span key={i} className={styles.emotionTag}>{tag}</span>
+                                    ))}
+                                </div>
 
-                            <p className={styles.inputPreview} onClick={handleReset} style={{ cursor: 'pointer' }}>
-                                <span className={styles.inputQuote}>"</span>
-                                {input}
-                                <span className={styles.inputQuote}>"</span>
-                                <span style={{ fontSize: '0.8rem', marginLeft: '8px', opacity: 0.6 }}>(수정하기)</span>
-                            </p>
+                                <p className={styles.inputPreview}>
+                                    <span className={styles.inputQuote}>"</span>
+                                    {input}
+                                    <span className={styles.inputQuote}>"</span>
+                                </p>
+                                <button type={"button"} onClick={handleReset} className={styles.backToMain}>
+                                    다른 기분 입력하기
+                                </button>
+
+                            </div>
                         </motion.div>
 
                         <div className={styles.singleCardContainer}>
