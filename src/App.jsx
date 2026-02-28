@@ -85,10 +85,11 @@ const App = () => { // const 선언 방식으로 변경
 
     return (
         <div className={styles.app}>
-            {/* 우측 상단 햄버거 메뉴 버튼 */}
-            <button className={styles.menuBtn} onClick={() => setPhase('history')}>
-                <Menu size={24} color="white" />
-            </button>
+            {phase !== 'loading' && (
+                <button className={styles.menuBtn} onClick={() => setPhase('history')}>
+                    <Menu size={24} color="white" />
+                </button>
+            )}
 
             <AnimatePresence mode="wait">
                 {/* ── INPUT PHASE ── */}
@@ -188,7 +189,7 @@ const App = () => { // const 선언 방식으로 변경
                                     initial={{ opacity: 0, y: -20 }}
                                     animate={{ opacity: 1, y: 0 }}>
                             <div className={styles.logo}
-                                 style={{ marginBottom: '1.5rem', cursor: 'pointer' }}
+                                 style={{ marginBottom: '1.5rem', cursor: 'pointer' , paddingTop: "0.4rem"}}
                                  onClick={handleReset}>
                                 MOODTUNE
                             </div>

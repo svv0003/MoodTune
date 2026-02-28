@@ -15,7 +15,7 @@ const MoodTracker = ({ onBack }) => {
         setHistory(saved);
     }, []);
 
-    const daysInMonth = 30;
+    const daysInMonth = 28;
     const daysArray = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
     const groupedHistory = history.reduce((acc, item) => {
@@ -49,9 +49,9 @@ const MoodTracker = ({ onBack }) => {
     return (
         <div className={styles.container}>
             <header className={styles.header}>
-                <button onClick={onBack} className={styles.backBtn}>
-                    ← 다른 기분 입력하기
-                </button>
+                {/*<button onClick={onBack} className={styles.backBtn}>*/}
+                {/*    다른 기분 입력하기*/}
+                {/*</button>*/}
                 <div className={styles.titleWrapper}>
                     <CalendarDays size={24} className={styles.titleIcon} />
                     <h2>Mood Tracker</h2>

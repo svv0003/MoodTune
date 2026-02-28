@@ -2,7 +2,7 @@
 .container {
     max-width: 800px;
     margin: 0 auto;
-    padding-top: 2rem;
+    /*padding-top: 2rem;*/
 }
 
 .header {
@@ -187,7 +187,8 @@
 /* 반응형 */
 @media (max-width: 480px) {
     .slidePanel {
-        width: 100%;
+        width: 70%;
+        border-radius: 1.8rem 0 0 1.8rem;
     }
     .calendarGrid {
         gap: 10px;
