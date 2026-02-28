@@ -1,9 +1,32 @@
+/* src/App.module.css */
 .app {
     min-height: 100vh;
     background-color: #0f172a;
     color: #ffffff;
     padding: 2rem;
     font-family: 'Pretendard', sans-serif;
+    position: relative; /* menuBtn 배치를 위해 추가 */
+}
+
+/* 우측 상단 메뉴 버튼 */
+.menuBtn {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    padding: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.menuBtn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
 }
 
 .inputPhase {
@@ -40,18 +63,13 @@
     color: #f472b6;
 }
 
-.subText {
-    color: #64748b;
-    margin-bottom: 2rem;
-}
-
 .textareaWrapper {
     position: relative;
     margin-bottom: 1.5rem;
 }
 
 .textarea {
-    width: 100%;
+    width: 90%;
     background: #1e293b;
     border: 1px solid #334155;
     border-radius: 1rem;
@@ -59,12 +77,19 @@
     color: white;
     resize: none;
     font-size: 1.1rem;
+    font-family: inherit;
+}
+
+.textarea:focus {
+    outline: none;
+    border-color: #a855f7;
+    box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
 }
 
 .charCount {
     position: absolute;
     bottom: 1rem;
-    right: 0;
+    right: 1.5rem;
     font-size: 0.8rem;
     color: #475569;
 }
@@ -85,6 +110,7 @@
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s;
+    font-family: inherit;
 }
 
 .quickTag:hover {
@@ -100,16 +126,41 @@
     border: none;
     color: white;
     font-weight: 700;
+    font-size: 1.1rem;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
     cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.submitBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #475569;
+}
+
+.submitBtn:not(:disabled):hover {
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+}
+
+.error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
 }
 
 /* 결과 페이지 스타일 */
 .resultPhase {
-    max-width: 1000px;
+    max-width: 800px;
     margin: 0 auto;
 }
 
@@ -121,6 +172,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    border: 1px solid #334155;
 }
 
 .leftContent {
@@ -129,72 +181,147 @@
     gap: 1rem;
 }
 
+.emotionIcon {
+    color: #f472b6;
+    font-size: 1.2rem;
+}
+
 .emotionSummary {
     margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #f1f5f9;
 }
 
-.resetIcon {
+.resetIconWrapper {
     cursor: pointer;
     color: #94a3b8;
-    transition: transform 0.2s;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
 }
 
-.resetIcon:hover {
-    transform: rotate(-45deg);
+.resetIconWrapper:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
 }
 
-.cardsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
+.resetIconWrapper:hover .resetIcon {
+    transform: rotate(-180deg);
 }
 
 .resultSubTitle {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    gap: 1rem;
 }
 
 .inputPreview {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
+    margin: 0;
+    font-size: 1rem;
+    color: #94a3b8;
+    text-align: center;
+    line-height: 1.5;
+    max-width: 80%;
+}
+
+.inputQuote {
+    color: #f472b6;
+    font-weight: bold;
+    font-size: 1.2rem;
 }
 
 .emotionTags {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
-    font-size: 12px;
+    gap: 8px;
 }
 
 .emotionTag {
     border-radius: 20px;
-    padding: 3px 8px;
-    margin-right: 10px;
-    border: 1px solid #6d6e89;
-    background-color: #5a6380;
+    padding: 4px 10px;
+    border: 1px solid #475569;
+    background-color: #1e293b;
+    font-size: 0.8rem;
+    color: #e2e8f0;
+    font-weight: 500;
 }
 
 .backToMain {
-    /*display: block;*/
-    border-radius: 20px;
-    padding: 5px 20px;
-    border: 1px solid #7c5dfa;
+    border-radius: 50px;
+    padding: 8px 24px;
+    border: none;
     background: #7c5dfa;
     cursor: pointer;
     color: white;
-    font-weight: bold;
-    /* --- 추가된 속성 --- */
-    transition: all 0.3s ease; /* 배경색과 위치가 0.3초 동안 부드럽게 변경됨 */
-    display: inline-block;    /* transform 효과가 잘 적용되도록 block 성격 부여 */
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    box-shadow: 0 4px 12px rgba(124, 93, 250, 0.3);
 }
 
 .backToMain:hover {
     background: #9277ff;
-    /* --- 추가된 속성 --- */
-    transform: translateY(-2px); /* Y축(위쪽)으로 4px만큼 이동 */
-    box-shadow: 0 5px 15px rgba(20, 12, 59, 0.4); /* 공중에 뜬 느낌을 주는 그림자 추가 */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(124, 93, 250, 0.4);
+}
+
+.singleCardContainer {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* 히스토리 페이즈 */
+.historyPhase {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* 반응형 */
+@media (max-width: 600px) {
+    .app {
+        padding: 1rem;
+    }
+    .mainQuestion {
+        font-size: 2rem;
+    }
+    .inputPhase {
+        padding-top: 2rem;
+    }
+    .logo {
+        font-size: 1.8rem;
+    }
+    .textarea {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    .charCount {
+        right: 1rem;
+        bottom: 0.8rem;
+    }
+    .submitBtn {
+        font-size: 1rem;
+        padding: 1rem;
+    }
+    .emotionSummaryBox {
+        padding: 1rem;
+    }
+    .emotionSummary {
+        font-size: 1rem;
+    }
+    .theme {
+        font-size: 1.2rem;
+    }
+    .menuBtn {
+        top: 1rem;
+        right: 1rem;
+        padding: 8px;
+    }
 }
