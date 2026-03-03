@@ -282,6 +282,8 @@
     margin: 0 auto;
 }
 
+
+
 /* 반응형 */
 @media (max-width: 600px) {
     .app {
@@ -321,5 +323,42 @@
         top: 1.2rem;
         right: 1.2rem;
         padding: 8px;
+    }
+}
+
+
+
+
+
+
+
+/* 오버레이 전체 컨테이너 */
+.historyOverlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    z-index: 1000;
+    background-color: #0f172a;
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+    overflow-y: auto; /* 내용이 길어지면 내부 스크롤 */
+
+    /* 기본 모바일 설정: 전체 화면 */
+    width: 100%;
+}
+
+/* 태블릿 이상일 때 스타일 (선택 사항) */
+@media (min-width: 768px) {
+    .historyOverlay {
+        /* 화면의 40%나 500px 정도만 차지하게 조절 가능 */
+        width: 450px;
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* 모바일 전용 터치 최적화 (여백 조정) */
+@media (max-width: 480px) {
+    .historyOverlay {
+        padding-bottom: env(safe-area-inset-bottom); /* 아이폰 하단 바 대응 */
     }
 }

@@ -22,8 +22,14 @@ const App = () => { // const 선언 방식으로 변경
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
     // phase: input, loading, result, history (무드 트래커 뷰)
     const [phase, setPhase] = useState('input');
+
+    const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
+    const openHistory = () => setIsHistoryOpen(true);
+    const closeHistory = () => setIsHistoryOpen(false);
 
     // 데이터를 로컬 스토리지에 저장하는 함수
     const saveToHistory = (data) => {
@@ -86,7 +92,7 @@ const App = () => { // const 선언 방식으로 변경
     return (
         <div className={styles.app}>
             {phase !== 'loading' && (
-                <button className={styles.menuBtn} onClick={() => setPhase('history')}>
+                <button className={styles.menuBtn} onClick={openHistory}>
                     <Menu size={24} color="white" />
                 </button>
             )}
@@ -233,18 +239,19 @@ const App = () => { // const 선언 방식으로 변경
                         </div>
                     </motion.div>
                 )}
+            </AnimatePresence>
 
-                {/* ── HISTORY PHASE (무드 트래커) ── */}
-                {phase === 'history' && (
+            <AnimatePresence>
+                {isHistoryOpen && (
                     <motion.div
-                        key="history"
-                        className={styles.historyPhase}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.4 }}
+                        key="history-overlay"
+                        className={styles.historyOverlay} // 분리한 CSS 클래스 적용
+                        initial={{ x: '100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '100%' }}
+                        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                     >
-                        <MoodTracker onBack={() => setPhase('input')} />
+                        <MoodTracker onBack={closeHistory} />
                     </motion.div>
                 )}
             </AnimatePresence>
